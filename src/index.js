@@ -3,6 +3,9 @@ import dotenv from "dotenv" // to use import we have to add {-r dotenv/config --
 // import mongoose from "mongoose"
 // import { DB_NAME } from "./constants";
 import connectDB from "./db/index.js";
+import express from "express"
+
+const app = express()
 
 //other way to connect dotenv
 dotenv.config({
