@@ -1,11 +1,7 @@
 // require('dotenv').config({path: './env'}) //Another way of using
 import dotenv from "dotenv" // to use import we have to add {-r dotenv/config --experimental-jason-modules} in package.json
-// import mongoose from "mongoose"
-// import { DB_NAME } from "./constants";
 import connectDB from "./db/index.js";
-import express from "express"
-
-const app = express()
+import { app } from "./app.js"
 
 //other way to connect dotenv
 dotenv.config({
@@ -16,9 +12,9 @@ dotenv.config({
 connectDB()
 .then( () => {
     app.listen(process.env.PORT || 8000, () => {
-        console.log(`Server is running at port ${process.env.PORT}`)
+        console.log(`@ Server is running at port ${process.env.PORT}`)
     })
-
+    
     app.on("ERROR : ", (error) => {
         console.log("ERROR : ",error)
         throw error
@@ -33,6 +29,8 @@ connectDB()
 /*
 Approch -> 1
 
+// import mongoose from "mongoose"
+// import { DB_NAME } from "./constants";
 import express from "express"
 
 const app = express();
