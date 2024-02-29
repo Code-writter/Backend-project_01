@@ -16,7 +16,7 @@ const generateAccessAndRefreshToken = async (userId) => {
         return {accessToken, refreshToken}
 
     } catch (error) {
-        throw new ApiError(500, `Something went wrong while generating refresh and access token`)
+        throw new ApiError(500, `Something went wrong while generating refresh and access token ${error}`)
     }
 }
 
@@ -90,57 +90,56 @@ const registerUser = asyncHandler( async (req, res) => {
 })
 
 const loginUser = asyncHandler(async (req, res) => {
+
     // req body  -> data
-    // username or email
-    // find the user
-    // password check
-    // access and refreshToken
-    // send cookie
-    // send response of successful login
-
     const {email, username, password} = req.body
-
-    if(!username || !email){
+    
+    // username or email
+    if(!username && !email){
         throw new ApiError(400, `Username or email is required`)
     }
-
+    
+    // find the user
     const user = await User.findOne({
         // either search by email or by username
         $or:[{username}, {email}]
     })
-
+    
     if(!user){
         throw new ApiError(404, `User doesn't exist`)
     }
-
+    
+    // password check
     const isPasswordValid = await user.isPasswordCorrect(password)
-
+    
     if(!isPasswordValid){
         throw new ApiError(401, `Invalid user credentials`)
     }
-
+    
+    // access and refreshToken
     const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user._id)
 
-    const loggedInUser = User.findById(user._id)
+    const loggedInUser = await User.findById(user._id)
     .select('-password -refreshToken')
 
     const options = {
         httpOnly: true,
         secure: true
     }
-
+    // send cookie
     return res
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken" , refreshToken, options)
-    .json(
+    // send response of successful login
+    .send(
         new ApiResponse(
             200,
             {
                 user: loggedInUser, accessToken, refreshToken
             },
             `User logged In successfully`
-        )
+        )       
     )
 
 })
