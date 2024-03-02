@@ -7,15 +7,16 @@ const asyncHandler = (requestHandler) => {
 
 
 
-export {asyncHandler}
 
 // const asyncHandler = (fn) => async(req, res, next) => {
 //     try {
 //         await fn(req, res, next)
 //     } catch (error) {
-//         res.status(err.code || 500).json({
+//         res.status(error.code || 500).json({
 //             success: false,
-//             message: err.message
+//             message: error.message
 //         })
 //     }
 // }
+export {asyncHandler}
+
