@@ -3,7 +3,7 @@ import {ApiError} from "../utils/ApiErrors.js"
 import {User} from "../models/user.models.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import { ApiResponse } from "../utils/ApiResponse.js"
-import { Jwt } from "jsonwebtoken"
+import Jwt  from "jsonwebtoken"
 
 const generateAccessAndRefreshToken = async (userId) => {
     try {
@@ -176,7 +176,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 
     try {
-        const decodedToken = jwt.verify(
+        const decodedToken = Jwt.verify(
             incomingRefreshToken, 
             process.env.REFRESH_TOKEN_SECRET,
         )
@@ -238,9 +238,11 @@ const getCurrentUser = asyncHandler(async(req, res, next) => {
     return res
     .status(200)
     .json(
-        200,
-        req.user,
-        'current user fetched successfully'
+        new ApiResponse(
+            200,
+            req.user,
+            'current user fetched successfully'
+        )
     )
 })
 
@@ -280,7 +282,7 @@ const updateUserAvatar = asyncHandler(async(req, res, next) => {
         throw new ApiError(400, 'Error while uploding avatar')
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
@@ -310,7 +312,7 @@ const updateUserCoverImage = asyncHandler(async(req, res, next) => {
         throw new ApiError(400, 'Error while uploding coverImage')
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set:{
@@ -327,6 +329,20 @@ const updateUserCoverImage = asyncHandler(async(req, res, next) => {
     )
 })
 
+const deleteOldAvatarImage = asyncHandler (async(req, res, next) => {
+    const oldAvatarImage = await User.findByIdAndDelete(avatar?._id)
+
+    if(!oldAvatarImage.url){
+        throw new ApiError(401, 'Avatar image not found')
+    }
+
+    return res
+    .status(200)
+    .json(
+        new ApiResponse(200, 'avatar image deleted successfully from db')
+    )
+})
+
 export {
     registerUser,
     loginUser,
@@ -337,4 +353,5 @@ export {
     updateAccountDetails,
     updateUserAvatar,
     updateUserCoverImage,
+    deleteOldAvatarImage,
 }
