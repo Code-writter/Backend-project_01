@@ -187,8 +187,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [JWT](https://jwt.io/)
 - [Cloudinary](https://cloudinary.com/)
 
-## 📧 Contact
-
-Your Name - [@yourtwitter](https://twitter.com/yourtwitter) - your.email@example.com
-
-Project Link: [https://github.com/yourusername/video-sharing-backend](https://github.com/yourusername/video-sharing-backend)
